@@ -24,6 +24,7 @@ namespace MyGame
             };
         }
         private Scene scene;
+        private Node cubeNode;
         private Node CameraNode;
         private Camera camera;
         protected override async void Start()
@@ -37,12 +38,12 @@ namespace MyGame
             scene.CreateComponent<Octree>();
 
             //cria o node do cubo
-            var cubeNode = scene.CreateChild("Cube");
+            cubeNode = scene.CreateChild("Cube");
             cubeNode.Position = new Vector3(0, 0, 0);
             var cubeObject = cubeNode.CreateComponent<StaticModel>();
             cubeObject.Model = cache.GetModel("Models/Cube.mdl");
             cubeObject.SetMaterial(cache.GetMaterial("Materials/Dice.xml"));
-            cubeNode.RunActions(new RepeatForever(new RotateBy(duration: 1f, deltaAngleX:0, deltaAngleY: 10, deltaAngleZ: 0)));
+            //cubeNode.RunActions(new RepeatForever(new RotateBy(duration: 1f, deltaAngleX:0, deltaAngleY: 10, deltaAngleZ: 0)));
 
             //cria o node da luz
             var lightNode = scene.CreateChild("DirectionalLight");
@@ -66,8 +67,45 @@ namespace MyGame
 
         protected override void OnUpdate(float timeStep)
         {
+            MoveCameraByTouches(timeStep);
+            MoveCameraByMouse(timeStep);
             base.OnUpdate(timeStep);
         }
 
+        private void MoveCameraByTouches(float timeStep)
+        {
+            const float touchSensitivity = 2f;
+            var input = Input;
+            for (uint i = 0, num = input.NumTouches; i < num; ++i)
+            {
+                TouchState state = input.GetTouch(i);
+                if (state.Delta.X != 0 || state.Delta.Y != 0)
+                {
+                    cubeYaw += touchSensitivity * camera.Fov / Graphics.Height * state.Delta.X;
+                    cubePitch += touchSensitivity * camera.Fov / Graphics.Height * state.Delta.Y;
+                    cubeNode.Rotation = new Quaternion(cubePitch, cubeYaw, 0);
+                }
+            }
+        }
+
+        private float cubeYaw = 0;
+        private float cubePitch = 0;
+
+        private void MoveCameraByMouse(float timeStep, float moveSpeed = 10.0f)
+        {
+            if (!Input.GetMouseButtonDown(MouseButton.Left))
+            {
+                return;
+            }
+            else
+            {
+                const float mouseSensitivity = .1f;
+                var mouseMove = Input.MouseMove;
+                cubeYaw += mouseSensitivity * mouseMove.X;
+                cubePitch += mouseSensitivity * mouseMove.Y;
+                cubePitch = MathHelper.Clamp(cubePitch, -90, 90);
+                cubeNode.Rotation = new Quaternion(cubePitch, cubeYaw, 0);
+            }
+        }
     }
 }
