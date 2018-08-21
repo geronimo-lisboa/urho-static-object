@@ -132,6 +132,8 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
+    <BundleResource Include="Resources\MyData\Materials\Dice.xml" />
+    <BundleResource Include="Resources\MyData\Textures\testeuvmappingdecubo.png" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
@@ -139,6 +141,7 @@
     <None Include="packages.config" />
     <BundleResource Include="Resources\MyData\Materials\*.*" />
     <BundleResource Include="Resources\MyData\Textures\*.*" />
+    <BundleResource Include="Resources\MyData\Models\Cube.mdl" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -155,5 +158,6 @@
       <Name>MyGame</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
